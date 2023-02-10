@@ -1,4 +1,5 @@
 import pygame
+from utils import move_rect, keep_inside_surface
 
 WIDTH, HEIGHT = 800, 600
 
@@ -34,15 +35,9 @@ class Player(pygame.sprite.Sprite):
     def draw(self, screen: pygame.Surface):
         screen.blit(self.image, self.rect)
 
-    def move(self, keys):
-        if keys[pygame.K_LEFT]:
-            self.rect.x -= self.VELOCITY
-        if keys[pygame.K_RIGHT]:
-            self.rect.x += self.VELOCITY
-        if keys[pygame.K_UP]:
-            self.rect.y -= self.VELOCITY
-        if keys[pygame.K_DOWN]:
-            self.rect.y += self.VELOCITY
+    def move(self, keys, screen: pygame.Surface):
+        move_rect(self.rect, keys, self.VELOCITY)
+        keep_inside_surface(screen, self.rect)
 
 
 def draw(screen: pygame.Surface, player: Player):
@@ -53,10 +48,10 @@ def draw(screen: pygame.Surface, player: Player):
     pygame.display.flip()
 
 
-def handle_movement(player: Player):
+def handle_movement(screen, player: Player):
     keys = pygame.key.get_pressed()
-    
-    player.move(keys)
+
+    player.move(keys, screen)
 
 
 def main():
@@ -71,7 +66,7 @@ def main():
 
         draw(screen, player)
 
-        handle_movement(player)
+        handle_movement(screen, player)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
