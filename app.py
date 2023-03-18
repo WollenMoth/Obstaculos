@@ -19,8 +19,6 @@ FPS = 24
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-PLAYER_SIZE = (32, 32)
-
 pygame.init()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -40,7 +38,7 @@ def draw(player: Player) -> None:
 def handle_movement(player: Player) -> None:
     """Maneja el movimiento del jugador"""
     keys = pygame.key.get_pressed()
-    player.move(keys)
+    player.move(keys, screen)
 
 
 def main() -> None:
