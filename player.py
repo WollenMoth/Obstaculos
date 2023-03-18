@@ -18,13 +18,13 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
 
         self.velocity = PLAYER_VELOCITY
-        start = (start[0] - PLAYER_SIZE[0] // 2, start[1] - PLAYER_SIZE[1] // 2)
+        start = tuple(start[i] - PLAYER_SIZE[i] // 2 for i in range(2))
         self.rect = pygame.Rect(start, PLAYER_SIZE)
-        self.mask = None
-        self.direction: Union[Direction, None] = None
-        self.animation_count = 0
+        self._direction = None
         self.sprites = load_sprites("", SPRITES_SIZE, True)
-        self.sprite = "idle_right"
+        self._sprite = "idle_right"
+        self.animation_count = 0
+        self.update_mask()
 
     def move(self, keys: pygame.key.ScancodeWrapper, surface: pygame.Surface) -> None:
         """Mueve al jugador"""
@@ -32,38 +32,78 @@ class Player(pygame.sprite.Sprite):
 
         if keys[pygame.K_LEFT]:
             x -= self.velocity
-            self.set_direction(Direction.left)
+            self.direction = Direction.left
             self.sprite = "run_left"
         elif keys[pygame.K_RIGHT]:
             x += self.velocity
-            self.set_direction(Direction.right)
+            self.direction = Direction.right
             self.sprite = "run_right"
         elif keys[pygame.K_UP]:
             y -= self.velocity
-            self.set_direction(Direction.up)
-            self.sprite = "jump" + \
-                ("_right" if "right" in self.sprite else "_left")
+            self.direction = Direction.up
+            self.sprite = "jump" + self.sprite_direction
         elif keys[pygame.K_DOWN]:
             y += self.velocity
-            self.set_direction(Direction.down)
-            self.sprite = "fall" + \
-                ("_right" if "right" in self.sprite else "_left")
+            self.direction = Direction.down
+            self.sprite = "fall" + self.sprite_direction
         else:
-            self.set_direction(None)
-            self.sprite = "idle" + \
-                ("_right" if "right" in self.sprite else "_left")
+            self.direction = None
+            self.sprite = "idle" + self.sprite_direction
 
-        if surface.get_rect().contains((x, y), self.rect.size):
+        surface_rect = surface.get_rect()
+        surface_mask = pygame.mask.from_surface(surface)
+        offset = (surface_rect.x - x, surface_rect.y - y)
+        overlap_area = self.mask.overlap_area(surface_mask, offset)
+        full_area = self.mask.count()
+
+        if overlap_area == full_area:
             self.rect.topleft = (x, y)
-
-    def set_direction(self, direction: Union[Direction, None]) -> None:
-        """Cambia la dirección del jugador"""
-        if self.direction != direction:
-            self.direction = direction
-            self.animation_count = 0
 
     def draw(self, screen: pygame.Surface) -> None:
         """Dibuja al jugador"""
-        screen.blit(self.sprites[self.sprite][self.animation_count], self.rect)
+        screen.blit(self.current_sprite, self.rect)
+        self.increase_count()
+
+    def increase_count(self) -> None:
+        """Aumenta el contador de animación"""
         self.animation_count += 1
         self.animation_count %= len(self.sprites[self.sprite])
+        self.update_mask()
+
+    def update_mask(self) -> None:
+        """Actualiza la máscara"""
+        self.mask = pygame.mask.from_surface(self.current_sprite)
+
+    @property
+    def direction(self) -> Union[Direction, None]:
+        """Obtiene la dirección del jugador"""
+        return self._direction
+
+    @direction.setter
+    def direction(self, direction: Union[Direction, None]) -> None:
+        """Cambia la dirección del jugador"""
+        if self._direction != direction:
+            self._direction = direction
+
+    @property
+    def sprite(self) -> str:
+        """Obtiene el sprite actual"""
+        return self._sprite
+
+    @sprite.setter
+    def sprite(self, sprite: str) -> None:
+        """Cambia el sprite actual"""
+        if self._sprite != sprite:
+            self.animation_count = 0
+            self._sprite = sprite
+            self.mask = pygame.mask.from_surface(self.current_sprite)
+
+    @property
+    def current_sprite(self) -> pygame.Surface:
+        """Obtiene el sprite actual"""
+        return self.sprites[self.sprite][self.animation_count]
+
+    @property
+    def sprite_direction(self) -> str:
+        """Obtiene la dirección del sprite"""
+        return "_right" if "right" in self.sprite else "_left"
