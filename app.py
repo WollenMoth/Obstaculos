@@ -1,16 +1,25 @@
+"""Juego con Obstáculos
+
+Este ejemplo muestra como crear un juego con obstáculos, en el cual el jugador
+debe evitar chocar con ellos o recolectarlos para ganar puntos.
+
+Autores:
+    - Ángel Ricardo Gutierrez Meza (201847467)
+    - Crhistian André Díaz Bonfigli Pastrana (201829189)
+"""
+
 import pygame
-from utils import move_rect, keep_inside_surface
+from player import Player
+
 
 WIDTH, HEIGHT = 800, 600
 
-FPS = 60
+FPS = 24
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-PLAYER_SIZE = 20
-PLAYER_COLOR = WHITE
-PLAYER_VELOCITY = 5
+PLAYER_SIZE = (32, 32)
 
 pygame.init()
 
@@ -19,28 +28,8 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Obstáculos")
 
 
-class Player(pygame.sprite.Sprite):
-    SIZE = PLAYER_SIZE
-    COLOR = PLAYER_COLOR
-    VELOCITY = PLAYER_VELOCITY
-
-    def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.image = pygame.Surface((self.SIZE, self.SIZE))
-        self.image.fill(self.COLOR)
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-
-    def draw(self, screen: pygame.Surface):
-        screen.blit(self.image, self.rect)
-
-    def move(self, keys, screen: pygame.Surface):
-        move_rect(self.rect, keys, self.VELOCITY)
-        keep_inside_surface(screen, self.rect)
-
-
-def draw(screen: pygame.Surface, player: Player):
+def draw(player: Player) -> None:
+    """Dibuja todos los elementos en la pantalla"""
     screen.fill(BLACK)
 
     player.draw(screen)
@@ -48,25 +37,26 @@ def draw(screen: pygame.Surface, player: Player):
     pygame.display.flip()
 
 
-def handle_movement(screen, player: Player):
+def handle_movement(player: Player) -> None:
+    """Maneja el movimiento del jugador"""
     keys = pygame.key.get_pressed()
+    player.move(keys)
 
-    player.move(keys, screen)
 
-
-def main():
+def main() -> None:
+    """Función principal del juego"""
     running = True
 
     clock = pygame.time.Clock()
 
-    player = Player(50, HEIGHT // 2)
+    player = Player((50, HEIGHT // 2))
 
     while running:
         clock.tick(FPS)
 
-        draw(screen, player)
+        draw(player)
 
-        handle_movement(screen, player)
+        handle_movement(player)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
