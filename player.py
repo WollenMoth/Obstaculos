@@ -18,6 +18,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
 
         self.velocity = PLAYER_VELOCITY
+        start = (start[0] - PLAYER_SIZE[0] // 2, start[1] - PLAYER_SIZE[1] // 2)
         self.rect = pygame.Rect(start, PLAYER_SIZE)
         self.mask = None
         self.direction: Union[Direction, None] = None
