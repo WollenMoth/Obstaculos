@@ -21,7 +21,7 @@ class Player(pygame.sprite.Sprite):
         start = tuple(start[i] - PLAYER_SIZE[i] // 2 for i in range(2))
         self.rect = pygame.Rect(start, PLAYER_SIZE)
         self._direction = None
-        self.sprites = load_sprites("", SPRITES_SIZE, True)
+        self.sprites = load_sprites("frog", SPRITES_SIZE, True)
         self._sprite = "idle_right"
         self.animation_count = 0
         self.update_mask()
