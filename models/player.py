@@ -2,27 +2,20 @@
 
 import pygame
 from common import Coordinate
-from sprites import load_sprites
+from .animated import Animated
 
 PLAYER_VELOCITY = 5
 PLAYER_SIZE = (64, 64)
-SPRITES_SIZE = (32, 32)
+SPRITE_SIZE = (32, 32)
 
-
-class Player(pygame.sprite.Sprite):
+class Player(Animated):
     """Representa al jugador"""
 
     def __init__(self, start: Coordinate) -> None:
         """Inicializa el jugador"""
-        super().__init__()
+        super().__init__(pygame.Rect(start, PLAYER_SIZE), "frog", SPRITE_SIZE, True)
 
         self.velocity = PLAYER_VELOCITY
-        self.rect = pygame.Rect(start, PLAYER_SIZE)
-        self.rect.center = start
-        self.sprites = load_sprites("frog", SPRITES_SIZE, True)
-        self._sprite = "idle_right"
-        self.animation_count = 0
-        self.update_mask()
 
     def move(self, keys: pygame.key.ScancodeWrapper, surface: pygame.Surface) -> None:
         """Mueve al jugador"""
@@ -51,41 +44,3 @@ class Player(pygame.sprite.Sprite):
 
         if overlap_area != full_area:
             self.rect.topleft = topleft
-
-    def draw(self, screen: pygame.Surface) -> None:
-        """Dibuja al jugador"""
-        screen.blit(self.current_sprite, self.rect)
-        self.increase_count()
-
-    def increase_count(self) -> None:
-        """Aumenta el contador de animación"""
-        self.animation_count += 1
-        self.animation_count %= len(self.sprites[self.sprite])
-        self.update_mask()
-
-    def update_mask(self) -> None:
-        """Actualiza la máscara"""
-        self.mask = pygame.mask.from_surface(self.current_sprite)
-
-    @property
-    def sprite(self) -> str:
-        """Obtiene el sprite actual"""
-        return self._sprite
-
-    @sprite.setter
-    def sprite(self, sprite: str) -> None:
-        """Cambia el sprite actual"""
-        if self._sprite != sprite:
-            self.animation_count = 0
-            self._sprite = sprite
-            self.mask = pygame.mask.from_surface(self.current_sprite)
-
-    @property
-    def current_sprite(self) -> pygame.Surface:
-        """Obtiene el sprite actual"""
-        return self.sprites[self.sprite][self.animation_count]
-
-    @property
-    def sprite_direction(self) -> str:
-        """Obtiene la dirección del sprite"""
-        return "_right" if "right" in self.sprite else "_left"
