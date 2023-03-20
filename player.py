@@ -1,8 +1,7 @@
 """Módulo que contiene la clase Player"""
 
-from typing import Union
 import pygame
-from common import Coordinate, Direction
+from common import Coordinate
 from sprites import load_sprites
 
 PLAYER_VELOCITY = 5
@@ -18,9 +17,8 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
 
         self.velocity = PLAYER_VELOCITY
-        start = tuple(start[i] - PLAYER_SIZE[i] // 2 for i in range(2))
         self.rect = pygame.Rect(start, PLAYER_SIZE)
-        self._direction = None
+        self.rect.center = start
         self.sprites = load_sprites("frog", SPRITES_SIZE, True)
         self._sprite = "idle_right"
         self.animation_count = 0
@@ -32,22 +30,17 @@ class Player(pygame.sprite.Sprite):
 
         if keys[pygame.K_LEFT]:
             x -= self.velocity
-            self.direction = Direction.left
             self.sprite = "run_left"
         elif keys[pygame.K_RIGHT]:
             x += self.velocity
-            self.direction = Direction.right
             self.sprite = "run_right"
         elif keys[pygame.K_UP]:
             y -= self.velocity
-            self.direction = Direction.up
             self.sprite = "jump" + self.sprite_direction
         elif keys[pygame.K_DOWN]:
             y += self.velocity
-            self.direction = Direction.down
             self.sprite = "fall" + self.sprite_direction
         else:
-            self.direction = None
             self.sprite = "idle" + self.sprite_direction
 
         surface_rect = surface.get_rect()
@@ -73,17 +66,6 @@ class Player(pygame.sprite.Sprite):
     def update_mask(self) -> None:
         """Actualiza la máscara"""
         self.mask = pygame.mask.from_surface(self.current_sprite)
-
-    @property
-    def direction(self) -> Union[Direction, None]:
-        """Obtiene la dirección del jugador"""
-        return self._direction
-
-    @direction.setter
-    def direction(self, direction: Union[Direction, None]) -> None:
-        """Cambia la dirección del jugador"""
-        if self._direction != direction:
-            self._direction = direction
 
     @property
     def sprite(self) -> str:
