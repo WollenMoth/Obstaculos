@@ -16,6 +16,7 @@ class Player(Animated):
         super().__init__(center, "frog", SPRITE_SIZE, True)
 
         self.velocity = PLAYER_VELOCITY
+        self.score = 0
 
     def move(self, keys: pygame.key.ScancodeWrapper, surface: pygame.Surface) -> None:
         """Mueve al jugador"""
