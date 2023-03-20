@@ -5,15 +5,15 @@ from common import Coordinate
 from .animated import Animated
 
 PLAYER_VELOCITY = 5
-PLAYER_SIZE = (64, 64)
 SPRITE_SIZE = (32, 32)
+
 
 class Player(Animated):
     """Representa al jugador"""
 
     def __init__(self, center: Coordinate) -> None:
         """Inicializa el jugador"""
-        super().__init__(pygame.Rect(center, PLAYER_SIZE), "frog", SPRITE_SIZE, True)
+        super().__init__(center, "frog", SPRITE_SIZE, True)
 
         self.velocity = PLAYER_VELOCITY
 

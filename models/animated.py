@@ -8,10 +8,10 @@ from sprites import load_sprites
 class Animated(pygame.sprite.Sprite):
     """Clase que representa un sprite animado"""
 
-    def __init__(self, rect: pygame.Rect, directory: str, size: Coordinate, flipped: bool = False):
+    def __init__(self, center: Coordinate, directory: str, size: Coordinate, flipped: bool = False):
         """Inicializa la clase Animated"""
         super().__init__()
-        self.rect = pygame.Rect(rect)
+        self.rect = pygame.Rect(center, tuple(s * 2 for s in size))
         self.rect.center = self.rect.topleft
         self.animation_count = 0
         self.sprites = load_sprites(directory, size, flipped)
