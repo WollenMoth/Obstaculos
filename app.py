@@ -20,13 +20,18 @@ FPS = 24
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
+TEXT_HEIGHT = 32
+
 pygame.init()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 pygame.display.set_caption("Obstáculos")
 
-def draw(player: Player, fruits: list[Fruit]) -> None:
+font = pygame.font.SysFont("MS Sans Serif", TEXT_HEIGHT)
+
+
+def draw(player: Player, fruits: list[Fruit], text: pygame.Surface) -> None:
     """Dibuja todos los elementos en la pantalla"""
     screen.fill(BLACK)
 
@@ -34,6 +39,11 @@ def draw(player: Player, fruits: list[Fruit]) -> None:
 
     for fruit in fruits:
         fruit.draw(screen)
+
+    text_rect = text.get_rect()
+    text_rect.center = (WIDTH // 2, TEXT_HEIGHT // 2)
+
+    screen.blit(text, text_rect)
 
     pygame.display.flip()
 
@@ -73,7 +83,9 @@ def main() -> None:
     while running:
         clock.tick(FPS)
 
-        draw(player, fruits)
+        text = font.render(f"Puntaje: {player.score}", True, WHITE)
+
+        draw(player, fruits, text)
 
         handle_movement(player, fruits)
 
