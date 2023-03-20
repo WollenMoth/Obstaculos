@@ -26,31 +26,31 @@ class Player(pygame.sprite.Sprite):
 
     def move(self, keys: pygame.key.ScancodeWrapper, surface: pygame.Surface) -> None:
         """Mueve al jugador"""
-        x, y = self.rect.topleft
+        topleft = self.rect.topleft
 
         if keys[pygame.K_LEFT]:
-            x -= self.velocity
+            self.rect.x -= self.velocity
             self.sprite = "run_left"
         elif keys[pygame.K_RIGHT]:
-            x += self.velocity
+            self.rect.x += self.velocity
             self.sprite = "run_right"
         elif keys[pygame.K_UP]:
-            y -= self.velocity
+            self.rect.y -= self.velocity
             self.sprite = "jump" + self.sprite_direction
         elif keys[pygame.K_DOWN]:
-            y += self.velocity
+            self.rect.y += self.velocity
             self.sprite = "fall" + self.sprite_direction
         else:
             self.sprite = "idle" + self.sprite_direction
 
         surface_rect = surface.get_rect()
         surface_mask = pygame.mask.from_surface(surface)
-        offset = (surface_rect.x - x, surface_rect.y - y)
+        offset = (surface_rect.x - self.rect.x, surface_rect.y - self.rect.y)
         overlap_area = self.mask.overlap_area(surface_mask, offset)
         full_area = self.mask.count()
 
-        if overlap_area == full_area:
-            self.rect.topleft = (x, y)
+        if overlap_area != full_area:
+            self.rect.topleft = topleft
 
     def draw(self, screen: pygame.Surface) -> None:
         """Dibuja al jugador"""
