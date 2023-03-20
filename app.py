@@ -9,7 +9,7 @@ Autores:
 """
 
 import pygame
-from player import Player
+from models import Player
 
 
 WIDTH, HEIGHT = 800, 600
