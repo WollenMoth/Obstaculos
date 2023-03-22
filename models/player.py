@@ -22,16 +22,16 @@ class Player(Animated):
         """Mueve al jugador"""
         topleft = self.rect.topleft
 
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.rect.x -= self.velocity
             self.sprite = "run_left"
-        elif keys[pygame.K_RIGHT]:
+        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             self.rect.x += self.velocity
             self.sprite = "run_right"
-        elif keys[pygame.K_UP]:
+        elif keys[pygame.K_UP] or keys[pygame.K_w]:
             self.rect.y -= self.velocity
             self.sprite = "jump" + self.sprite_direction
-        elif keys[pygame.K_DOWN]:
+        elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
             self.rect.y += self.velocity
             self.sprite = "fall" + self.sprite_direction
         else:
