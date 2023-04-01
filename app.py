@@ -10,12 +10,11 @@ Autores:
 
 import random
 import pygame
-from models import Fruit, Player
+from models import Fruit, Player, Spike
+from models.animated import FPS
 
 
 WIDTH, HEIGHT = 800, 600
-
-FPS = 24
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -31,7 +30,7 @@ pygame.display.set_caption("Obstáculos")
 font = pygame.font.SysFont("MS Sans Serif", TEXT_HEIGHT)
 
 
-def draw(player: Player, fruits: list[Fruit], text: pygame.Surface) -> None:
+def draw(player: Player, fruits: list[Fruit], spikes: list[Spike], text: pygame.Surface) -> None:
     """Dibuja todos los elementos en la pantalla"""
     screen.fill(BLACK)
 
@@ -39,6 +38,9 @@ def draw(player: Player, fruits: list[Fruit], text: pygame.Surface) -> None:
 
     for fruit in fruits:
         fruit.draw(screen)
+
+    for spike in spikes:
+        spike.draw(screen)
 
     text_rect = text.get_rect()
     text_rect.center = (WIDTH // 2, TEXT_HEIGHT // 2)
@@ -48,7 +50,7 @@ def draw(player: Player, fruits: list[Fruit], text: pygame.Surface) -> None:
     pygame.display.flip()
 
 
-def handle_movement(player: Player, fruits: list[Fruit]) -> None:
+def handle_movement(player: Player, fruits: list[Fruit], spikes: list[Spike]) -> None:
     """Maneja el movimiento del jugador"""
     keys = pygame.key.get_pressed()
     player.move(keys, screen)
@@ -63,6 +65,13 @@ def handle_movement(player: Player, fruits: list[Fruit]) -> None:
 
     for fruit in fruits_to_remove:
         fruits.remove(fruit)
+
+    for spike in spikes:
+        spike.loop(screen)
+
+        offset = (spike.rect.x - player.rect.x, spike.rect.y - player.rect.y)
+        if player.mask.overlap(spike.mask, offset):
+            player.status = "dead"
 
 
 def main() -> None:
@@ -80,14 +89,25 @@ def main() -> None:
             if not random.randint(0, 2):
                 fruits.append(Fruit((i, j)))
 
+    spikes: list[Spike] = []
+
+    for i in range(150, WIDTH - 100, 100):
+        if random.randint(0, 1):
+            center = (i, HEIGHT // 2)
+            spikes.append(Spike(center))
+
     while running:
         clock.tick(FPS)
 
         text = font.render(f"Puntaje: {player.score}", True, WHITE)
 
-        draw(player, fruits, text)
+        draw(player, fruits, spikes, text)
 
-        handle_movement(player, fruits)
+        handle_movement(player, fruits, spikes)
+
+        if player.status == "dead":
+            running = False
+            break
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

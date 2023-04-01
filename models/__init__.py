@@ -2,3 +2,4 @@
 
 from .player import *
 from .fruit import *
+from .spike import *

@@ -17,6 +17,7 @@ class Player(Animated):
 
         self.velocity = PLAYER_VELOCITY
         self.score = 0
+        self.status = "alive"
 
     def move(self, keys: pygame.key.ScancodeWrapper, surface: pygame.Surface) -> None:
         """Mueve al jugador"""
