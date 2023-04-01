@@ -4,11 +4,20 @@ import pygame
 from common import Coordinate
 from sprites import load_sprites
 
+FPS = 24
+
 
 class Animated(pygame.sprite.Sprite):
     """Clase que representa un sprite animado"""
 
-    def __init__(self, center: Coordinate, directory: str, size: Coordinate, flipped: bool = False):
+    def __init__(
+        self,
+        center: Coordinate,
+        directory: str,
+        size: Coordinate,
+        flipped: bool = False,
+        fps: int = 24
+    ):
         """Inicializa la clase Animated"""
         super().__init__()
         self.rect = pygame.Rect(center, tuple(s * 2 for s in size))
@@ -17,6 +26,7 @@ class Animated(pygame.sprite.Sprite):
         self.sprites = load_sprites(directory, size, flipped)
         self._sprite = self.sprites.keys().__iter__().__next__()
         self.update_mask()
+        self.fps = fps
 
     def draw(self, screen: pygame.Surface) -> None:
         """Dibuja el sprite"""
@@ -25,7 +35,7 @@ class Animated(pygame.sprite.Sprite):
 
     def increase_count(self) -> None:
         """Aumenta el contador de animación"""
-        self.animation_count += 1
+        self.animation_count += self.fps / FPS
         self.animation_count %= len(self.sprites[self.sprite])
         self.update_mask()
 
@@ -49,7 +59,7 @@ class Animated(pygame.sprite.Sprite):
     @property
     def current_sprite(self) -> pygame.Surface:
         """Obtiene el sprite actual"""
-        return self.sprites[self.sprite][self.animation_count]
+        return self.sprites[self.sprite][int(self.animation_count)]
 
     @property
     def sprite_direction(self) -> str:
