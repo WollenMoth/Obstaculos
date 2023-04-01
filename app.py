@@ -30,7 +30,7 @@ pygame.display.set_caption("Obstáculos")
 font = pygame.font.SysFont("MS Sans Serif", TEXT_HEIGHT)
 
 
-def draw(player: Player, fruits: list[Fruit], spikes: list[Spike], text: pygame.Surface) -> None:
+def draw(player: Player, fruits: list[Fruit], spikes: list[Spike]) -> None:
     """Dibuja todos los elementos en la pantalla"""
     screen.fill(BLACK)
 
@@ -41,6 +41,8 @@ def draw(player: Player, fruits: list[Fruit], spikes: list[Spike], text: pygame.
 
     for spike in spikes:
         spike.draw(screen)
+
+    text = font.render(f"Puntaje: {player.score}", True, WHITE)
 
     text_rect = text.get_rect()
     text_rect.center = (WIDTH // 2, TEXT_HEIGHT // 2)
@@ -99,9 +101,7 @@ def main() -> None:
     while running:
         clock.tick(FPS)
 
-        text = font.render(f"Puntaje: {player.score}", True, WHITE)
-
-        draw(player, fruits, spikes, text)
+        draw(player, fruits, spikes)
 
         handle_movement(player, fruits, spikes)
 
