@@ -15,14 +15,10 @@ class End(Animated):
         self.sprite = "idle"
         self.status = "normal"
 
-    def increase_count(self) -> None:
-        """Aumenta el contador de animación"""
-        self.animation_count += 1
-
+    def reset_count(self) -> None:
+        """Resetea el contador de animación"""
         if self.animation_count == len(self.sprites[self.sprite]):
             self.animation_count = 0
 
             if self.sprite == "pressed":
                 self.status = "pressed"
-
-        self.update_mask()

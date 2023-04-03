@@ -36,8 +36,12 @@ class Animated(pygame.sprite.Sprite):
     def increase_count(self) -> None:
         """Aumenta el contador de animación"""
         self.animation_count += self.fps / FPS
-        self.animation_count %= len(self.sprites[self.sprite])
+        self.reset_count()
         self.update_mask()
+
+    def reset_count(self) -> None:
+        """Resetea el contador de animación"""
+        self.animation_count %= len(self.sprites[self.sprite])
 
     def update_mask(self) -> None:
         """Actualiza la máscara"""
