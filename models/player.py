@@ -15,6 +15,7 @@ class Player(Animated):
         """Inicializa el jugador"""
         super().__init__(center, "frog", SPRITE_SIZE, True)
 
+        self.start = center
         self.velocity = PLAYER_VELOCITY
         self.score = 0
         self.status = "alive"
@@ -46,3 +47,11 @@ class Player(Animated):
 
         if overlap_area != full_area:
             self.rect.topleft = topleft
+
+    def restart(self) -> None:
+        """Reinicia al jugador"""
+        self.rect.center = self.start
+
+        if self.status == "dead":
+            self.status = "alive"
+            self.score = 0

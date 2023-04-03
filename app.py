@@ -52,6 +52,26 @@ def draw(player: Player, fruits: list[Fruit], spikes: list[Spike]) -> None:
     pygame.display.flip()
 
 
+def wait_screen() -> bool:
+    """Muestra la pantalla de espera"""
+    text = font.render("Presiona cualquier tecla para reiniciar", True, WHITE)
+
+    text_rect = text.get_rect()
+    text_rect.center = (WIDTH // 2, HEIGHT // 2)
+
+    screen.blit(text, text_rect)
+
+    pygame.display.flip()
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return False
+
+            if event.type == pygame.KEYDOWN:
+                return True
+
+
 def handle_movement(player: Player, fruits: list[Fruit], spikes: list[Spike]) -> None:
     """Maneja el movimiento del jugador"""
     keys = pygame.key.get_pressed()
@@ -84,35 +104,40 @@ def main() -> None:
 
     player = Player((50, HEIGHT // 2))
 
-    fruits: list[Fruit] = []
-
-    for i in range(150, WIDTH - 100, 100):
-        for j in range(100, HEIGHT, 100):
-            if not random.randint(0, 2):
-                fruits.append(Fruit((i, j)))
-
-    spikes: list[Spike] = []
-
-    for i in range(150, WIDTH - 100, 100):
-        if random.randint(0, 1):
-            center = (i, HEIGHT // 2)
-            spikes.append(Spike(center))
-
     while running:
-        clock.tick(FPS)
+        fruits: list[Fruit] = []
 
-        draw(player, fruits, spikes)
+        for i in range(150, WIDTH - 100, 100):
+            for j in range(100, HEIGHT, 100):
+                if not random.randint(0, 2):
+                    fruits.append(Fruit((i, j)))
 
-        handle_movement(player, fruits, spikes)
+        spikes: list[Spike] = []
 
-        if player.status == "dead":
-            running = False
-            break
+        for i in range(150, WIDTH - 100, 100):
+            if random.randint(0, 1):
+                center = (i, HEIGHT // 2)
+                spikes.append(Spike(center))
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
+        while running:
+            clock.tick(FPS)
+
+            draw(player, fruits, spikes)
+
+            handle_movement(player, fruits, spikes)
+
+            if player.status == "dead":
                 break
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                    break
+
+        if running:
+            running = wait_screen()
+
+            player.restart()
 
     pygame.quit()
 
