@@ -10,7 +10,7 @@ Autores:
 
 import random
 import pygame
-from models import Fruit, Player, Spike
+from models import End, Fruit, Player, Spike
 from models.animated import FPS
 
 
@@ -30,7 +30,7 @@ pygame.display.set_caption("Obstáculos")
 font = pygame.font.SysFont("MS Sans Serif", TEXT_HEIGHT)
 
 
-def draw(player: Player, fruits: list[Fruit], spikes: list[Spike]) -> None:
+def draw(player: Player, fruits: list[Fruit], spikes: list[Spike], end: End) -> None:
     """Dibuja todos los elementos en la pantalla"""
     screen.fill(BLACK)
 
@@ -41,6 +41,8 @@ def draw(player: Player, fruits: list[Fruit], spikes: list[Spike]) -> None:
 
     for spike in spikes:
         spike.draw(screen)
+
+    end.draw(screen)
 
     text = font.render(f"Puntaje: {player.score}", True, WHITE)
 
@@ -72,7 +74,7 @@ def wait_screen() -> bool:
                 return True
 
 
-def handle_movement(player: Player, fruits: list[Fruit], spikes: list[Spike]) -> None:
+def handle_movement(player: Player, fruits: list[Fruit], spikes: list[Spike], end: End) -> None:
     """Maneja el movimiento del jugador"""
     keys = pygame.key.get_pressed()
     player.move(keys, screen)
@@ -94,6 +96,10 @@ def handle_movement(player: Player, fruits: list[Fruit], spikes: list[Spike]) ->
         offset = (spike.rect.x - player.rect.x, spike.rect.y - player.rect.y)
         if player.mask.overlap(spike.mask, offset):
             player.status = "dead"
+
+    offset = (end.rect.x - player.rect.x, end.rect.y - player.rect.y)
+    if player.mask.overlap(end.mask, offset) and end.status == "normal":
+        end.sprite = "pressed"
 
 
 def main() -> None:
@@ -119,14 +125,16 @@ def main() -> None:
                 center = (i, HEIGHT // 2)
                 spikes.append(Spike(center))
 
+        end = End((WIDTH - 50, HEIGHT // 2))
+
         while running:
             clock.tick(FPS)
 
-            draw(player, fruits, spikes)
+            draw(player, fruits, spikes, end)
 
-            handle_movement(player, fruits, spikes)
+            handle_movement(player, fruits, spikes, end)
 
-            if player.status == "dead":
+            if player.status == "dead" or end.status == "pressed":
                 break
 
             for event in pygame.event.get():
@@ -134,10 +142,10 @@ def main() -> None:
                     running = False
                     break
 
-        if running:
+        if running and player.status == "dead":
             running = wait_screen()
 
-            player.restart()
+        player.restart()
 
     pygame.quit()
 
