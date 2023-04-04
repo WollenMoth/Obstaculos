@@ -13,8 +13,9 @@ import pygame
 from models import Background, End, Fruit, Player, Spike
 from models.animated import FPS
 
+TILE_SIZE = 64
 
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 12 * TILE_SIZE, 10 * TILE_SIZE
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -118,24 +119,29 @@ def main() -> None:
 
     background = Background(screen)
 
-    player = Player((50, HEIGHT // 2))
+    player = Player((TILE_SIZE // 2, HEIGHT // 2))
+
+    start = 2 * TILE_SIZE
+    x_stop = WIDTH - 2 * TILE_SIZE
+    y_stop = HEIGHT - 2 * TILE_SIZE
+    step = int(1.5 * TILE_SIZE)
 
     while running:
         fruits: list[Fruit] = []
 
-        for i in range(150, WIDTH - 100, 100):
-            for j in range(100, HEIGHT, 100):
+        for i in range(start, x_stop, step):
+            for j in range(start, y_stop + 1, step):
                 if not random.randint(0, 2):
                     fruits.append(Fruit((i, j)))
 
         spikes: list[Spike] = []
 
-        for i in range(150, WIDTH - 100, 100):
+        for i in range(start, x_stop, step):
             if random.randint(0, 1):
                 center = (i, HEIGHT // 2)
                 spikes.append(Spike(center))
 
-        end = End((WIDTH - 50, HEIGHT // 2))
+        end = End((WIDTH - TILE_SIZE, HEIGHT // 2))
 
         while running:
             clock.tick(FPS)
