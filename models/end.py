@@ -10,7 +10,7 @@ class End(Animated):
 
     def __init__(self, center) -> None:
         """Inicializa el final"""
-        super().__init__(center, "end", SPRITE_SIZE, False)
+        super().__init__(center, "end", SPRITE_SIZE, False, fps=12)
 
         self.sprite = "idle"
         self.status = "normal"
