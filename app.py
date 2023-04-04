@@ -10,7 +10,7 @@ Autores:
 
 import random
 import pygame
-from models import End, Fruit, Player, Spike
+from models import Background, End, Fruit, Player, Spike
 from models.animated import FPS
 
 
@@ -30,9 +30,17 @@ pygame.display.set_caption("Obstáculos")
 font = pygame.font.SysFont("MS Sans Serif", TEXT_HEIGHT)
 
 
-def draw(player: Player, fruits: list[Fruit], spikes: list[Spike], end: End) -> None:
+def draw(
+    background: Background,
+    player: Player,
+    fruits: list[Fruit],
+    spikes: list[Spike],
+    end: End
+) -> None:
     """Dibuja todos los elementos en la pantalla"""
     screen.fill(BLACK)
+
+    background.draw(screen)
 
     player.draw(screen)
 
@@ -108,6 +116,8 @@ def main() -> None:
 
     clock = pygame.time.Clock()
 
+    background = Background(screen)
+
     player = Player((50, HEIGHT // 2))
 
     while running:
@@ -130,7 +140,7 @@ def main() -> None:
         while running:
             clock.tick(FPS)
 
-            draw(player, fruits, spikes, end)
+            draw(background, player, fruits, spikes, end)
 
             handle_movement(player, fruits, spikes, end)
 
