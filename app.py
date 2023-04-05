@@ -10,7 +10,7 @@ Autores:
 
 import random
 import pygame
-from models import Background, End, Fruit, Player, Saw, Spike
+from models import Animated, Background, End, Fruit, Player, Saw, Spike
 from models.animated import FPS
 
 TILE_SIZE = 64
@@ -31,14 +31,7 @@ pygame.display.set_caption("Obstáculos")
 font = pygame.font.SysFont("MS Sans Serif", TEXT_HEIGHT)
 
 
-def draw(
-    background: Background,
-    player: Player,
-    fruits: list[Fruit],
-    saws: list[Saw],
-    spikes: list[Spike],
-    end: End
-) -> None:
+def draw(background: Background, player: Player, objects: list[Animated]) -> None:
     """Dibuja todos los elementos en la pantalla"""
     screen.fill(BLACK)
 
@@ -46,16 +39,8 @@ def draw(
 
     player.draw(screen)
 
-    for fruit in fruits:
-        fruit.draw(screen)
-
-    for saw in saws:
-        saw.draw(screen)
-
-    for spike in spikes:
-        spike.draw(screen)
-
-    end.draw(screen)
+    for obj in objects:
+        obj.draw(screen)
 
     text = font.render(f"Puntaje: {player.score}", True, WHITE)
 
@@ -170,7 +155,7 @@ def main() -> None:
         while running:
             clock.tick(FPS)
 
-            draw(background, player, fruits, saws, spikes, end)
+            draw(background, player, [*fruits, *saws, *spikes, end])
 
             handle_movement(player, fruits, saws, spikes, end)
 
