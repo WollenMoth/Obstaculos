@@ -10,7 +10,7 @@ Autores:
 
 import random
 import pygame
-from models import Background, End, Fruit, Player, Spike
+from models import Background, End, Fruit, Player, Saw, Spike
 from models.animated import FPS
 
 TILE_SIZE = 64
@@ -35,6 +35,7 @@ def draw(
     background: Background,
     player: Player,
     fruits: list[Fruit],
+    saws: list[Saw],
     spikes: list[Spike],
     end: End
 ) -> None:
@@ -47,6 +48,9 @@ def draw(
 
     for fruit in fruits:
         fruit.draw(screen)
+
+    for saw in saws:
+        saw.draw(screen)
 
     for spike in spikes:
         spike.draw(screen)
@@ -83,7 +87,13 @@ def wait_screen() -> bool:
                 return True
 
 
-def handle_movement(player: Player, fruits: list[Fruit], spikes: list[Spike], end: End) -> None:
+def handle_movement(
+    player: Player,
+    fruits: list[Fruit],
+    saws: list[Saw],
+    spikes: list[Spike],
+    end: End
+) -> None:
     """Maneja el movimiento del jugador"""
     keys = pygame.key.get_pressed()
     player.move(keys, screen)
@@ -98,6 +108,13 @@ def handle_movement(player: Player, fruits: list[Fruit], spikes: list[Spike], en
 
     for fruit in fruits_to_remove:
         fruits.remove(fruit)
+
+    for saw in saws:
+        saw.loop(screen)
+
+        offset = (saw.rect.x - player.rect.x, saw.rect.y - player.rect.y)
+        if player.mask.overlap(saw.mask, offset):
+            player.status = "dead"
 
     for spike in spikes:
         spike.loop(screen)
@@ -129,10 +146,17 @@ def main() -> None:
     while running:
         fruits: list[Fruit] = []
 
+        saws: list[Saw] = []
+
         for i in range(start, x_stop, step):
             for j in range(start, y_stop + 1, step):
                 if not random.randint(0, 2):
                     fruits.append(Fruit((i, j)))
+
+        for i in range(start, x_stop, 2 * step):
+            for j in range(start, y_stop + 1, 2 * step):
+                if not random.randint(0, 2):
+                    saws.append(Saw((i, j)))
 
         spikes: list[Spike] = []
 
@@ -146,9 +170,9 @@ def main() -> None:
         while running:
             clock.tick(FPS)
 
-            draw(background, player, fruits, spikes, end)
+            draw(background, player, fruits, saws, spikes, end)
 
-            handle_movement(player, fruits, spikes, end)
+            handle_movement(player, fruits, saws, spikes, end)
 
             if player.status == "dead" or end.status == "pressed":
                 break
