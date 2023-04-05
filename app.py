@@ -84,8 +84,7 @@ def handle_movement(
     player.move(keys, screen)
 
     for fruit in fruits:
-        offset = (fruit.rect.x - player.rect.x, fruit.rect.y - player.rect.y)
-        if player.mask.overlap(fruit.mask, offset) and fruit.sprite != "collected":
+        if player.overlap(fruit) and fruit.sprite != "collected":
             fruit.sprite = "collected"
             player.score += 1
 
@@ -97,12 +96,10 @@ def handle_movement(
     for killer in [*saws, *spikes]:
         killer.loop(screen)
 
-        offset = (killer.rect.x - player.rect.x, killer.rect.y - player.rect.y)
-        if player.mask.overlap(killer.mask, offset):
+        if player.overlap(killer) and player.status != "dead":
             player.status = "dead"
 
-    offset = (end.rect.x - player.rect.x, end.rect.y - player.rect.y)
-    if player.mask.overlap(end.mask, offset) and end.status == "normal":
+    if player.overlap(end) and end.status == "normal":
         end.sprite = "pressed"
 
 

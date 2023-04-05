@@ -55,3 +55,8 @@ class Player(Animated):
         if self.status == "dead":
             self.status = "alive"
             self.score = 0
+
+    def overlap(self, other: Animated) -> bool:
+        """Comprueba si el jugador colisiona con otro sprite"""
+        offset = (other.rect.x - self.rect.x, other.rect.y - self.rect.y)
+        return bool(self.mask.overlap(other.mask, offset))
