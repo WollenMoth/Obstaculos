@@ -94,18 +94,11 @@ def handle_movement(
     for fruit in fruits_to_remove:
         fruits.remove(fruit)
 
-    for saw in saws:
-        saw.loop(screen)
+    for killer in [*saws, *spikes]:
+        killer.loop(screen)
 
-        offset = (saw.rect.x - player.rect.x, saw.rect.y - player.rect.y)
-        if player.mask.overlap(saw.mask, offset):
-            player.status = "dead"
-
-    for spike in spikes:
-        spike.loop(screen)
-
-        offset = (spike.rect.x - player.rect.x, spike.rect.y - player.rect.y)
-        if player.mask.overlap(spike.mask, offset):
+        offset = (killer.rect.x - player.rect.x, killer.rect.y - player.rect.y)
+        if player.mask.overlap(killer.mask, offset):
             player.status = "dead"
 
     offset = (end.rect.x - player.rect.x, end.rect.y - player.rect.y)
