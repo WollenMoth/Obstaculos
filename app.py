@@ -9,6 +9,7 @@ Autores:
 """
 
 import random
+from typing import Union
 import pygame
 from models import Animated, Background, End, Fruit, Player, Saw, Spike
 from models.animated import FPS
@@ -21,6 +22,10 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
 TEXT_HEIGHT = 32
+
+FRUIT_PROB = 3
+SAW_PROB = 3
+SPIKE_PROB = 2
 
 pygame.init()
 
@@ -103,6 +108,11 @@ def handle_movement(
         end.sprite = "pressed"
 
 
+def gen_objs(obj: type, x_ran: Union[range, list], y_ran: Union[range, list], prob: int) -> list:
+    """Genera una lista de objetos"""
+    return [obj((i, j)) for i in x_ran for j in y_ran if not random.randint(0, prob - 1)]
+
+
 def main() -> None:
     """Función principal del juego"""
     running = True
@@ -115,31 +125,16 @@ def main() -> None:
 
     start = 2 * TILE_SIZE
     x_stop = WIDTH - 2 * TILE_SIZE
-    y_stop = HEIGHT - 2 * TILE_SIZE
+    y_stop = HEIGHT - 2 * TILE_SIZE + 1
     step = int(1.5 * TILE_SIZE)
 
     while running:
-        fruits: list[Fruit] = []
-
-        saws: list[Saw] = []
-
-        for i in range(start, x_stop, step):
-            for j in range(start, y_stop + 1, step):
-                if not random.randint(0, 2):
-                    fruits.append(Fruit((i, j)))
-
-        for i in range(start, x_stop, 2 * step):
-            for j in range(start, y_stop + 1, 2 * step):
-                if not random.randint(0, 2):
-                    saws.append(Saw((i, j)))
-
-        spikes: list[Spike] = []
-
-        for i in range(start, x_stop, step):
-            if random.randint(0, 1):
-                center = (i, HEIGHT // 2)
-                spikes.append(Spike(center))
-
+        fruits = gen_objs(Fruit, range(start, x_stop, step),
+                          range(start, y_stop, step), FRUIT_PROB)
+        saws = gen_objs(Saw, range(start, x_stop, 2 * step),
+                        range(start, y_stop, 2 * step), SAW_PROB)
+        spikes = gen_objs(Spike, range(start, x_stop, step),
+                          [HEIGHT // 2], SPIKE_PROB)
         end = End((WIDTH - TILE_SIZE, HEIGHT // 2))
 
         while running:
