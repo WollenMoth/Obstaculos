@@ -24,19 +24,28 @@ class Player(Animated):
         """Mueve al jugador"""
         topleft = self.rect.topleft
 
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        directions = {
+            "left": keys[pygame.K_LEFT] or keys[pygame.K_a],
+            "right": keys[pygame.K_RIGHT] or keys[pygame.K_d],
+            "up": keys[pygame.K_UP] or keys[pygame.K_w],
+            "down": keys[pygame.K_DOWN] or keys[pygame.K_s]
+        }
+
+        if directions["left"]:
             self.rect.x -= self.velocity
             self.sprite = "run_left"
-        elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        elif directions["right"]:
             self.rect.x += self.velocity
             self.sprite = "run_right"
-        elif keys[pygame.K_UP] or keys[pygame.K_w]:
+
+        if directions["up"]:
             self.rect.y -= self.velocity
             self.sprite = "jump" + self.sprite_direction
-        elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
+        elif directions["down"]:
             self.rect.y += self.velocity
             self.sprite = "fall" + self.sprite_direction
-        else:
+
+        if not any(directions.values()):
             self.sprite = "idle" + self.sprite_direction
 
         surface_rect = surface.get_rect()
