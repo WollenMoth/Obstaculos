@@ -4,7 +4,7 @@ import pygame
 from common import Coordinate
 from .animated import Animated
 
-PLAYER_VELOCITY = 5
+PLAYER_VELOCITY = 8
 SPRITE_SIZE = (32, 32)
 
 
